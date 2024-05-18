@@ -6,7 +6,7 @@ public class AnotherService implements ServiceInterface{
     public AnotherService(String anotherMessage) {
         this.anotherMessage = anotherMessage;
     }
-
+    @Override
     public String getInfo(){
         return "Another " + this.anotherMessage;
     }

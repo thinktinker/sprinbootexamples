@@ -5,7 +5,7 @@ public class Service implements ServiceInterface {
     public Service(String message) {
         this.message = message;
     }
-
+    @Override
     public String getInfo(){
         return this.message;
     }
