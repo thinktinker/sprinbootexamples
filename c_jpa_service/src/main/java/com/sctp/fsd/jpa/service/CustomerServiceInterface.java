@@ -15,9 +15,11 @@ public interface CustomerServiceInterface {
     //  updateCustomer (DONE)
     //  removeCustomer (DONE)
     //  getCustomer (DONE)
+    //  countCustomers (DONE)
     public abstract Optional<Customer> createCustomer(Customer customer);
     public abstract List<Customer> getCustomers();
     public abstract Optional<Customer> updateCustomer(Integer id, Customer customer);
     public abstract boolean removeCustomer(Integer id);
     public abstract Optional<Customer> getCustomer(Integer id);
+    public abstract long countCustomers();
 }

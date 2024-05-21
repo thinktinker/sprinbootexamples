@@ -105,4 +105,13 @@ public class CustomerController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    // TODO
+    //  Implemented
+    //  Count all customers
+    @GetMapping("/count")
+    public ResponseEntity<Object> getCustomerCount() throws Exception{
+        Long count = customerServiceInterface.countCustomers();
+        return new ResponseEntity<>(count.intValue() , HttpStatus.OK);
+    }
 }

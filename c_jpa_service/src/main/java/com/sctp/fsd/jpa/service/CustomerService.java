@@ -78,4 +78,10 @@ public class CustomerService implements CustomerServiceInterface {
     public Optional<Customer> getCustomer(Integer id) {
         return customerRepository.findById(id);
     }
+
+    @Override
+    public long countCustomers() {
+        long result = customerRepository.count();
+        return result;
+    }
 }
