@@ -1,18 +1,16 @@
 public class Square implements Shape{
-
-    float value;
-
-    public Square(float value) {
-        this.value = value;
+    float length;
+    public Square(float length) {
+        this.length = length;
     }
 
     @Override
     public float area() {
-        return this.value * this.value;
+        return length * length;
     }
 
     @Override
-    public float perimeter(){
-        return (float) 2 * (this.value + this.value);
+    public float perimeter() {
+        return  4 * length;
     }
 }
