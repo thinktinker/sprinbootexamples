@@ -1,18 +1,19 @@
-public class Circle implements Shape{
-
-    float value;
-
-    public Circle(float value) {
-        this.value = value;
+public class Circle implements Shape {
+    
+    float radius;
+    float pi = (float)Math.PI;
+    
+    public Circle(float radius) {
+        this.radius = radius;
     }
 
     @Override
     public float area() {
-        return (float) (Math.PI * this.value * this.value);
+        return ((pi)*(radius*radius));
     }
 
     @Override
     public float perimeter() {
-        return (float) (2 * Math.PI * this.value);
+        return (2*pi*radius);
     }
 }
