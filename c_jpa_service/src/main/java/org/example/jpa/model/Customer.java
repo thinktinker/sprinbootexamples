@@ -1,27 +1,27 @@
-package com.sctp.fsd.jpa.model;
+package org.example.jpa.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name="customer")
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
-    @Column(name="name", nullable = false)  // TODO :  Implemented - name cannot be null
-    String name;
+    private Long id;
 
-    @Column(name="email", nullable = false) // TODO :  Implemented - email cannot be null
-    String email;
-    @Column(name="phone")
-    String phone;
+    @Column (nullable = false)
+    private String name;
 
+    @Column (nullable = false)
+    private String email;
 
-    // TODO :
-    //  Implemented
-    //  the default constructor is required
-    //  when creating empty instances of Customer (e.g. getAllCustomers)
-    public Customer(){}
+    @Column
+    private String phone;
+
+    public Customer() {     // create a new empty instance of Customer
+    }
 
     public Customer(String name, String email, String phone) {
         this.name = name;
@@ -29,12 +29,8 @@ public class Customer {
         this.phone = phone;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -60,4 +56,5 @@ public class Customer {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
 }
