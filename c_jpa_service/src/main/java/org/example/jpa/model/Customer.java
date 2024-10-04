@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
+@Table(name="customer", uniqueConstraints = {@UniqueConstraint(name ="email", columnNames = "email")})
 public class Customer {
 
     @Id
