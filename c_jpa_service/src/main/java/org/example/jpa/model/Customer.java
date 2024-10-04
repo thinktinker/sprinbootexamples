@@ -11,7 +11,6 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Min(value = 1, message = "ID must be a positive number")
     private Long id;
 
     @Column (nullable = false)
