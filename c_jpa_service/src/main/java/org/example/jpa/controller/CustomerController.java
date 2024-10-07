@@ -35,7 +35,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> customer(@PathVariable Long id){
+    public ResponseEntity<Object> customer(@PathVariable("id") Long id){
         Customer customer = customerService.findById(id).orElseThrow(()->new ResourceNotFoundException());
 
         return new  ResponseEntity<> (customer, HttpStatus.OK);
