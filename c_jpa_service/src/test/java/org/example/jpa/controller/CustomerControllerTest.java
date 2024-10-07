@@ -90,6 +90,24 @@ class CustomerControllerTest {
     }
 
     @Test
+    @DisplayName("** JUNIT test: get customer by Id")
+    void customer() throws Exception{
+
+        // arrange - setup precondition
+        customerRepository.save(customer1);
+
+        // act - action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT.concat("/{id}"), customer1.getId()));
+
+        // assert - verify the output (as expected)
+        resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.name").value(customer1.getName()))
+                .andExpect(jsonPath("$.email").value(customer1.getEmail()))
+                .andExpect(jsonPath("$.phone").value(customer1.getPhone()));
+    }
+
+    @Test
     @DisplayName("** JUnit test: save customer from Customer Ctrl. **")
     void saveCustomer() throws Exception {
 
