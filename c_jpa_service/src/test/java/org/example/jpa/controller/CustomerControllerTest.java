@@ -105,6 +105,7 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.name").value(customer1.getName()))
                 .andExpect(jsonPath("$.email").value(customer1.getEmail()))
                 .andExpect(jsonPath("$.phone").value(customer1.getPhone()));
+                .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains(customer1.getEmail())));
     }
 
     @Test
