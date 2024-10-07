@@ -16,7 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,12 +26,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc(addFilters = false) // addFilter = false to disable security filter for unit test.
+@SpringBootTest(webEnvironment =  SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc(addFilters = false) // addFilter = false disables security for unit test
 class CustomerControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -39,15 +41,14 @@ class CustomerControllerTest {
 
     private static final String API_ENDPOINT = "/api/customers";
 
-
     private Customer customer1, customer2;
-    private final List<Customer> customerList = new ArrayList<>();
+    private List<Customer> customerList = new ArrayList<>();
 
-    //Runs before each JUnit test operation
+    // Run before each JUNIT test operation
     @BeforeEach
-    void setup(){
+    void setUp() {
 
-        // If there is a need to delete all records before running the tests
+        // Delete all records in the database before starting
         customerRepository.deleteAll();
 
         // arrange (precondition)
@@ -68,29 +69,46 @@ class CustomerControllerTest {
         customerList.add(customer2);
     }
 
-    //Runs after each JUnit test operation
     @AfterEach
     void tearDown() {
     }
 
     @Test
-    @DisplayName("** JUnit test: get all customers from Customer Ctrl. **")
-    void allCustomers() throws Exception {
+    @DisplayName("** JUNIT test: get all customers from Customer Ctrl. **")
+    void allCustomers() throws Exception{
 
         // arrange - setup precondition
-        // refer to setup()
-
-        // act -  action or behaviour to test
         customerRepository.saveAll(customerList);
 
+        // act - action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT));
+
         // assert - verify the output
-        List<Customer> customers = customerRepository.findAll();
-        assertFalse(customers.isEmpty());
-        assertEquals(customers.size(), customerList.size());
+        resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", is(customerList.size())));
     }
 
     @Test
-    @DisplayName("** JUnit test: save customer from Customer Ctrl. **")
+    @DisplayName("** JUNIT test: get customer by Id")
+    void customer() throws Exception{
+
+        // arrange - setup precondition
+        customerRepository.save(customer1);
+
+        // act - action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT.concat("/{id}"), customer1.getId()));
+
+        // assert - verify the output
+        resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.name").value(customer1.getName()))
+                .andExpect(jsonPath("$.email").value(customer1.getEmail()))
+                .andExpect(jsonPath("$.phone").value(customer1.getPhone()))
+                .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains(customer1.getEmail())));
+    }
+
+    @Test
     void saveCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -109,10 +127,11 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.phone").value(customer1.getPhone()))
                 .andExpect(result -> assertNotNull(result.getResponse().getContentAsString()))
                 .andExpect(result -> assertTrue(result.getResponse().getContentAsString().contains(customer1.getEmail())));
+
     }
 
     @Test
-    @DisplayName("** JUnit test: update customer from Customer Ctrl. **")
+    @DisplayName("** JUNIT test: update a customer from Customer Ctrl")
     void updateCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -122,11 +141,11 @@ class CustomerControllerTest {
 
         updateCustomer1.setName("Updated Customer X");
         updateCustomer1.setPhone("92234567");
-        updateCustomer1.setEmail("updated_customer_x@gmail.com");
+        updateCustomer1.setEmail("udpated_customer_x@gmail.com");
 
         String requestBody = objectMapper.writeValueAsString(updateCustomer1);
 
-        // act -  action or behaviour to test
+        // act - action or behaviour to test
         ResultActions resultActions = mockMvc.perform(put(API_ENDPOINT.concat("/{id}"), updateCustomer1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
@@ -140,7 +159,6 @@ class CustomerControllerTest {
     }
 
     @Test
-    @DisplayName("** JUnit test: delete customer from Customer Ctrl. **")
     void deleteCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -150,30 +168,37 @@ class CustomerControllerTest {
 
         String expectedResponse = String.format("%s deleted successfully", deleteCustomer1.getName());
 
-        // act -  action or behaviour to test
+        // act - action or behaviour to test
         ResultActions resultActions = mockMvc.perform(delete(API_ENDPOINT.concat("/{id}"), deleteCustomer1.getId())
                 .contentType(MediaType.APPLICATION_JSON));
 
         // assert - verify the output
         resultActions.andExpect(status().isOk())
                 .andDo(print())
-                // Checking that the response body matches the expected message
+                // Check that the body response matches the expected message
                 .andExpect(result -> assertEquals(expectedResponse, result.getResponse().getContentAsString()));
     }
 
     @Test
-    @DisplayName("** JUnit test: count customer from Customer Ctrl. **")
-    void countCustomer() {
+    void countCustomer() throws Exception {
 
-            // arrange - setup precondition
-            customerRepository.saveAll(customerList);
+        // arrange - setup precondition
+        customerRepository.saveAll(customerList);
+        long count = customerRepository.count();
 
-            // act - action or behaviour to test
-            long count = customerRepository.count();
+        Map<String, Object> expectedResponse = new HashMap<>();
+        expectedResponse.put("total", count);
 
-            // assert - verify the output
-            assertEquals(customerList.size(), count, "Number of customers should match the saved customers.");
+        String expectedString = objectMapper.writeValueAsString(expectedResponse);
 
+        // act - action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT.concat("/count"))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // assert - verify the output
+        resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(result -> assertEquals(expectedString, result.getResponse().getContentAsString()));
     }
 
     @Test
