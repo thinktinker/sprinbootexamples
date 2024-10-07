@@ -1,6 +1,7 @@
 package org.example.jpa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.jpa.exception.ResourceNotFoundException;
 import org.example.jpa.model.Customer;
 import org.example.jpa.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -21,8 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc(addFilters = false) // addFilter = false to disable security filter for unit test.
@@ -174,5 +174,23 @@ class CustomerControllerTest {
             // assert - verify the output
             assertEquals(customerList.size(), count, "Number of customers should match the saved customers.");
 
+    }
+
+    @Test
+    @DisplayName("** JUnit test: ResourceNotFoundException to get a customer by id from Customer Ctrl. **")
+    void getCustomerResourceNotFoundException() throws Exception {
+
+        // arrange - setup precondition
+        customerRepository.saveAll(customerList);
+        Long erroneousId = 1000L;
+
+        // act -  action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT.concat("/{id}"), erroneousId));
+
+        // assert - verify the output
+        resultActions.andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(content().string("{\"error\":\"Resource not found.\"}"))
+                .andExpect(result -> assertInstanceOf(ResourceNotFoundException.class, result.getResolvedException()));
     }
 }
