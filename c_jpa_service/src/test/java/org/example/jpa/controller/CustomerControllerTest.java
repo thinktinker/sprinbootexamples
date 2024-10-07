@@ -5,6 +5,7 @@ import org.example.jpa.model.Customer;
 import org.example.jpa.repository.CustomerRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -73,6 +74,7 @@ class CustomerControllerTest {
     }
 
     @Test
+    @DisplayName("** JUnit test: get all customers from Customer Ctrl. **")
     void allCustomers() throws Exception {
 
         // arrange - setup precondition
@@ -82,12 +84,13 @@ class CustomerControllerTest {
         customerRepository.saveAll(customerList);
 
         // assert - verify the output
-        List<Customer> suppliers = customerRepository.findAll();
-        assertFalse(suppliers.isEmpty());
-        assertEquals(suppliers.size(), customerList.size());
+        List<Customer> customers = customerRepository.findAll();
+        assertFalse(customers.isEmpty());
+        assertEquals(customers.size(), customerList.size());
     }
 
     @Test
+    @DisplayName("** JUnit test: save customer from Customer Ctrl. **")
     void saveCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -109,6 +112,7 @@ class CustomerControllerTest {
     }
 
     @Test
+    @DisplayName("** JUnit test: update customer from Customer Ctrl. **")
     void updateCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -136,6 +140,7 @@ class CustomerControllerTest {
     }
 
     @Test
+    @DisplayName("** JUnit test: delete customer from Customer Ctrl. **")
     void deleteCustomer() throws Exception {
 
         // arrange - setup precondition
@@ -157,6 +162,7 @@ class CustomerControllerTest {
     }
 
     @Test
+    @DisplayName("** JUnit test: count customer from Customer Ctrl. **")
     void countCustomer() {
 
             // arrange - setup precondition
