@@ -78,15 +78,15 @@ class CustomerControllerTest {
     void allCustomers() throws Exception {
 
         // arrange - setup precondition
-        // refer to setup()
-
-        // act -  action or behaviour to test
         customerRepository.saveAll(customerList);
 
-        // assert - verify the output
-        List<Customer> customers = customerRepository.findAll();
-        assertFalse(customers.isEmpty());
-        assertEquals(customers.size(), customerList.size());
+        // act - action or behaviour to test
+        ResultActions resultActions = mockMvc.perform(get(API_ENDPOINT));
+
+        // assert - verify the output (as expected)
+        resultActions.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.size()", is(customerList.size())));
     }
 
     @Test
