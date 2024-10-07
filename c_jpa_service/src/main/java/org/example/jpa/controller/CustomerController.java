@@ -36,7 +36,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<Object> saveCustomer(@RequestBody @Valid Customer customer){
-        return new ResponseEntity<>(customerService.save(customer), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.save(customer), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
