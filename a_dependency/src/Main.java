@@ -5,7 +5,6 @@ public class Main {
 
     public static void main(String[] args) {
         
-        @Autowired
         Service service = new Service("Custom Message from Service."); // Inject the service to be used by the client
         Client client = new Client(service);
 
