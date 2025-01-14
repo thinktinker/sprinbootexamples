@@ -19,7 +19,7 @@ public class Customer {
 
     // TODO :
     //  Implemented
-    //  the default constructor is required
+    //  the empty constructor is required
     //  when creating empty instances of Customer (e.g. getAllCustomers)
     public Customer(){}
 
