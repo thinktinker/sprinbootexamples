@@ -13,5 +13,5 @@
     # TO DO: Implemented create (when run) and drop (when stopped) tables
     spring.jpa.hibernate.ddl-auto=create-drop
     spring.datasource.drive-class-name=com.mysql.cj.jdbc.Driver
-    spring.jpa.show-sql: true
+    spring.jpa.show-sql=true
 ```
