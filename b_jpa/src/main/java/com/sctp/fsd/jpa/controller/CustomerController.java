@@ -113,7 +113,7 @@ public class CustomerController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Object> getCustomerByEmail(
+    public ResponseEntity<Object> getCustomerByEmailOrLastName(
             @RequestParam("email") String email,
             @RequestParam("lastName") String lastName
             ) throws Exception{
