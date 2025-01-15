@@ -1,48 +1,71 @@
 package com.sctp.fsd.jpa.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
-@Table(name="customer")
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
-    @Column(name="name", nullable = false)  // TODO :  Implemented - name cannot be null
-    String name;
+    Integer Id;
 
-    @Column(name="email", nullable = false) // TODO :  Implemented - email cannot be null
+    @Column(nullable = false)
+    @NotBlank
+    @Min(value = 3, message = "Min 3 characters for first name.")
+    String firstName;
+
+    @Column(nullable = false)
+    @NotBlank
+    @Min(value = 3, message = "Min 3 characters for last name.")
+    String lastName;
+
+    @Column(nullable = false, unique = true)
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", flags = Pattern.Flag.CASE_INSENSITIVE)
     String email;
-    @Column(name="phone")
+
+    @Column
     String phone;
 
+    // Constructors
 
-    // TODO :
-    //  Implemented
-    //  the empty constructor is required
-    //  when creating empty instances of Customer (e.g. getAllCustomers)
-    public Customer(){}
+    public Customer() {
+    }
 
-    public Customer(String name, String email, String phone) {
-        this.name = name;
+    public Customer(String firstName, String lastName, String email, String phone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.phone = phone;
     }
 
+    // Getters and Setters
+
     public Integer getId() {
-        return id;
+        return Id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        Id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
