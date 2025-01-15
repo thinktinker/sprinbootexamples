@@ -1,10 +1,7 @@
 package com.sctp.fsd.jpa.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Customer {
@@ -15,12 +12,12 @@ public class Customer {
 
     @Column(nullable = false)
     @NotBlank(message = "First name must not be blank")
-    @Min(value = 3, message = "Min 3 characters for first name.")
+    @Size(min = 3, message = "Min 3 characters for first name.")
     String firstName;
 
     @Column(nullable = false)
     @NotBlank(message = "Last name must not be blank")
-    @Min(value = 3, message = "Min 3 characters for last name.")
+    @Size(min = 3, message = "Min 3 characters for last name.")
     String lastName;
 
     @Column(nullable = false, unique = true)
