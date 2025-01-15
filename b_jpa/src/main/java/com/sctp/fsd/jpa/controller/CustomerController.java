@@ -103,10 +103,30 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getCustomerById(@PathVariable("id") Integer id){
-        Optional<Customer> customer = customerRepository.findById(id);
-        if(!customer.isPresent())
-            return new ResponseEntity<>("Customer is not found.", HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+    public ResponseEntity<Object> getCustomerById(@PathVariable("id") Integer id) throws Exception{
+        try{
+            Customer customer = customerRepository.findById(id).orElseThrow(()->new Exception());
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Object> getCustomerByEmail(
+            @RequestParam("email") String email,
+            @RequestParam("lastName") String lastName
+            ) throws Exception{
+        try {
+            List<Customer> customers = customerRepository.findByEmailContainingOrLastNameContaining(email, lastName);
+
+            if(customers.isEmpty()){
+                throw new Exception();
+            }
+
+            return new ResponseEntity<>(customers, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }
