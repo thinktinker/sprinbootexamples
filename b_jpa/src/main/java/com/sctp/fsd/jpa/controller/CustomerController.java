@@ -12,78 +12,96 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/*
+* Controller to manage incoming requests
+* Using @Controller annotation
+* */
 @Controller
-@RequestMapping("/jpa")
 public class CustomerController {
-    @Autowired
+
+    @Autowired  // Connect to CustomerRepository Interface (in another package)
     CustomerRepository customerRepository;
 
-    // TODO:
-    //  Implemented
-    //  Add a new customer (Note: allow null values to be received first)
-    @PostMapping(path="/add")
-    public ResponseEntity<Object> addNewCustomer(@Nullable @RequestParam String name, @Nullable @RequestParam String email, @Nullable @RequestParam String phone) throws  Exception{
-        try{
-            Customer customer = new Customer(name, email, phone);
+//    @PostMapping("/add")
+//    public ResponseEntity<Object> addCustomer(
+//            @RequestParam String firstName,
+//            @RequestParam String lastName,
+//            @RequestParam String email,
+//            @Nullable @RequestParam String phone) throws Exception{
+//
+//        try{
+//            // try running the code block
+//            Customer customer = new Customer(firstName, lastName, email, phone);
+//            customerRepository.save(customer);
+//
+//            return new ResponseEntity<>(customer, HttpStatus.CREATED);
+//        }catch (Exception e){
+//            // present the errors or return the error(s)
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);    // amend to remove e.getMessage()
+//        }
+//
+//    }
+
+    @PostMapping("/add")public ResponseEntity<Object> addCustomer(@RequestBody Customer customer) throws Exception{
+        try {
+            // try running the code block
             customerRepository.save(customer);
-            return new ResponseEntity<>("Customer added successfully.", HttpStatus.CREATED);
+            return new ResponseEntity<>(customer, HttpStatus.CREATED);    }
+        catch (Exception e) {
+            // present the error(s) or return the error(s)
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        catch (Exception e){
-            return new ResponseEntity<>("Unable to add customer.", HttpStatus.BAD_REQUEST);
-        }
-
     }
 
-    // TODO:
-    //  Implemented
-    //  Retrieve all customers
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllCustomers(){
-        List<Customer> customers = (List<Customer>) customerRepository.findAll();
-        if(customers.isEmpty()){
-            return new ResponseEntity<>("No customer(s) found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> allCustomers() throws Exception{
+        try{
+            // try running the code block
+            List<Customer> customers = (List<Customer>) customerRepository.findAll();
+
+            return new ResponseEntity<>(customers, HttpStatus.OK);
+        }catch (Exception e){
+            // present the errors or return the error(s)
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
 
-    // TODO:
-    //  Implemented
-    //  Update customer by id
-    @PutMapping("{id}")
-    public ResponseEntity<Object> updateCustomerById(@PathVariable("id") Integer id, @RequestBody Customer customer) throws Exception{
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateCustomer(
+            @PathVariable("id") Integer id,
+            @RequestBody Customer customer) throws Exception{
+
         try{
-            Optional<Customer> currentCustomer = customerRepository.findById(id);
-            Customer updateCustomer = currentCustomer.get();
-            updateCustomer.setName(customer.getName());
-            updateCustomer.setEmail(customer.getEmail());
-            updateCustomer.setPhone(customer.getPhone());
-            Customer result = customerRepository.save(updateCustomer);
+            // the exception here is invoked through a lambda expression ()->{}
+            Customer currentCustomer = customerRepository.findById(id).orElseThrow(()->new Exception("Customer Not Found."));
+
+            // update the customer
+            currentCustomer.setFirstName(customer.getFirstName());
+            currentCustomer.setLastName(customer.getLastName());
+            currentCustomer.setEmail(customer.getEmail());
+            currentCustomer.setPhone(customer.getPhone());
+            Customer result = customerRepository.save(currentCustomer);
             return new ResponseEntity<>(result, HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>("Customer is not found.", HttpStatus.NOT_FOUND);
-        }
-    }
 
-    // TODO:
-    //  Implemented
-    //  Delete customer by id
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteCustomerById(@PathVariable("id") Integer id) throws Exception{
-        try{
-            Optional<Customer> customer = customerRepository.findById(id);
-            if (customer.isPresent()) {
-                customerRepository.deleteById(id);
-                return new ResponseEntity<>("Customer deleted.", HttpStatus.OK);
-            }
-            throw new Exception("Customer is not found.");
-        }catch (Exception e){
+        }catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+
     }
 
-    // TODO:
-    //  Implemented
-    //  Retrieve a customer by id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCustomer(@PathVariable("id") Integer id) throws Exception{
+        try{
+            // We should only delete a customer, ONLY if the customer is found
+            Customer customer = customerRepository.findById(id).orElseThrow(()->new Exception());
+            customerRepository.delete(customer);
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+
+        }catch (Exception e){
+            return new  ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCustomerById(@PathVariable("id") Integer id){
         Optional<Customer> customer = customerRepository.findById(id);
