@@ -14,17 +14,20 @@ public class Customer {
     Integer Id;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotBlank(message = "First name must not be blank")
     @Min(value = 3, message = "Min 3 characters for first name.")
     String firstName;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotBlank(message = "Last name must not be blank")
     @Min(value = 3, message = "Min 3 characters for last name.")
     String lastName;
 
     @Column(nullable = false, unique = true)
-    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", flags = Pattern.Flag.CASE_INSENSITIVE)
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
+            flags = Pattern.Flag.CASE_INSENSITIVE,
+            message = "Email is invalid"
+        )
     String email;
 
     @Column
