@@ -138,7 +138,7 @@ public class CustomerController {
 
                 return new ResponseEntity<>(customers, HttpStatus.OK);
 
-            }else{
+            }else if(email.isBlank() && !lastName.isBlank()){
 
                 List<Customer> customers = customerRepository.findByLastNameContaining(lastName);
 
@@ -146,7 +146,10 @@ public class CustomerController {
                     throw new Exception("Customer not found.");
 
                 return new ResponseEntity<>(customers, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(allCustomers(), HttpStatus.OK);
             }
+            
 
 
         }catch(Exception e){
