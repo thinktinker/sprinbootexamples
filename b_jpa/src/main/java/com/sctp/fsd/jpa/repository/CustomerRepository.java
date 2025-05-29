@@ -15,6 +15,9 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer> {
     // delete(Integer)       - delete an instance by Id
     // for all the methods, refer to CrudRepository interface
 
-    // Create custom query
-    List<Customer> findByEmailContainingOrLastNameContaining(String email, String lastName);   // SELECT * from customer WHERE email LIKE "%email%" OR lastName LIKE "%lastName%";
+    // find customer by email containing specific value(s)
+    // using DERIVED queries
+    List<Customer> findByEmailContainingOrLastNameContaining(String email, String lastName);
+    List<Customer> findByEmailContaining(String email);
+    List<Customer> findByLastNameContaining(String lastName);
 }
