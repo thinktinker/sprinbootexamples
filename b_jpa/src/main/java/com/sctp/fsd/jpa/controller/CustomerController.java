@@ -114,17 +114,41 @@ public class CustomerController {
 
     @GetMapping("")
     public ResponseEntity<Object> getCustomerByEmailOrLastName(
-            @RequestParam("email") String email,
-            @RequestParam("lastName") String lastName
-            ) throws Exception{
-        try {
-            List<Customer> customers = customerRepository.findByEmailContainingOrLastNameContaining(email, lastName);
+            @RequestParam("email") String email,                            // email is a url param
+            @RequestParam("lastName") String lastName) throws Exception{    // lastName is a url param
 
-            if(customers.isEmpty()){
-                throw new Exception();
+        try {
+
+            if(!email.isBlank() && !lastName.isBlank()) {
+
+                List<Customer> customers = customerRepository.
+                        findByEmailContainingOrLastNameContaining(email, lastName);
+
+                if (customers.isEmpty())
+                    throw new Exception("Customer not found.");
+
+                return new ResponseEntity<>(customers, HttpStatus.OK);
+
+            }else if(!email.isBlank() && lastName.isBlank()){
+
+                List<Customer> customers = customerRepository.findByEmailContaining(email);
+
+                if (customers.isEmpty())
+                    throw new Exception("Customer not found.");
+
+                return new ResponseEntity<>(customers, HttpStatus.OK);
+
+            }else{
+
+                List<Customer> customers = customerRepository.findByLastNameContaining(lastName);
+
+                if (customers.isEmpty())
+                    throw new Exception("Customer not found.");
+
+                return new ResponseEntity<>(customers, HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(customers, HttpStatus.OK);
+
         }catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
